@@ -147,6 +147,7 @@ def train(device, model, train_data_loader, test_data_loader, optimizer,
         running_loss = 0.
         model.train()
         print("Stating epoch:", global_epoch)
+        print("lengt:", len(train_data_loader))
         for step, (x, mel, y) in enumerate(train_data_loader):
             print("Working 1")
             
@@ -188,7 +189,7 @@ def train(device, model, train_data_loader, test_data_loader, optimizer,
             print('Loss: {}'.format(running_loss / (step + 1)))
 
         global_epoch += 1
-
+        print("Epoch done")
 def eval_model(test_data_loader, global_step, device, model, checkpoint_dir):
     eval_steps = 1400
     print('Evaluating for {} steps'.format(eval_steps))
