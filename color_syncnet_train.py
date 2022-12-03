@@ -145,11 +145,9 @@ def train(device, model, train_data_loader, test_data_loader, optimizer,
     
     while global_epoch < nepochs:
         running_loss = 0.
-        print("About to start")
-        prog_bar = tqdm(enumerate(train_data_loader))
-        print("prog bar")
-        for step, (x, mel, y) in prog_bar:
-            print("step",step)
+
+        for step, (x, mel, y) in enumerate(train_data_loader):
+            
             model.train()
             optimizer.zero_grad()
 
@@ -176,8 +174,8 @@ def train(device, model, train_data_loader, test_data_loader, optimizer,
             if global_step % hparams.syncnet_eval_interval == 0:
                 with torch.no_grad():
                     eval_model(test_data_loader, global_step, device, model, checkpoint_dir)
-
-            prog_bar.set_description('Loss: {}'.format(running_loss / (step + 1)))
+            print("Step:",step)
+            print('Loss: {}'.format(running_loss / (step + 1)))
 
         global_epoch += 1
 
