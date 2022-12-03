@@ -145,7 +145,9 @@ def train(device, model, train_data_loader, test_data_loader, optimizer,
     
     while global_epoch < nepochs:
         running_loss = 0.
+        print("About to start")
         prog_bar = tqdm(enumerate(train_data_loader))
+        print("prog bar")
         for step, (x, mel, y) in prog_bar:
             print("step",step)
             model.train()
