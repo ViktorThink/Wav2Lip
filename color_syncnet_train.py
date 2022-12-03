@@ -145,32 +145,42 @@ def train(device, model, train_data_loader, test_data_loader, optimizer,
     
     while global_epoch < nepochs:
         running_loss = 0.
+        model.train()
         print("Stating epoch:", global_epoch)
         for step, (x, mel, y) in enumerate(train_data_loader):
+            print("Working 1")
             
-            model.train()
             optimizer.zero_grad()
+            print("Working 2")
 
             # Transform data to CUDA device
             x = x.to(device)
+            print("Working 3")
 
             mel = mel.to(device)
+            print("Working 4")
 
             a, v = model(mel, x)
+            print("Working 5")
             y = y.to(device)
+            print("Working 6")
 
             loss = cosine_loss(a, v, y)
+            print("Working 7")
             loss.backward()
+            print("Working 8")
             optimizer.step()
+            print("Working 9")
 
             global_step += 1
             cur_session_steps = global_step - resumed_step
             running_loss += loss.item()
+            print("Working 10")
 
             if global_step == 1 or global_step % checkpoint_interval == 0:
                 save_checkpoint(
                     model, optimizer, global_step, checkpoint_dir, global_epoch)
-
+            print("Working 11")
             if global_step % hparams.syncnet_eval_interval == 0:
                 with torch.no_grad():
                     eval_model(test_data_loader, global_step, device, model, checkpoint_dir)
