@@ -145,7 +145,7 @@ def train(device, model, train_data_loader, test_data_loader, optimizer,
     
     while global_epoch < nepochs:
         running_loss = 0.
-
+        print("Stating epoch:", global_epoch)
         for step, (x, mel, y) in enumerate(train_data_loader):
             
             model.train()
@@ -260,7 +260,7 @@ if __name__ == "__main__":
 
     test_data_loader = data_utils.DataLoader(
         test_dataset, batch_size=hparams.syncnet_batch_size,
-        num_workers=8)
+        num_workers=2)
 
     device = torch.device("cuda" if use_cuda else "cpu")
 
