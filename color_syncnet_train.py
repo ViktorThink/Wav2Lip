@@ -145,8 +145,7 @@ def train(device, model, train_data_loader, test_data_loader, optimizer,
     
     while global_epoch < nepochs:
         running_loss = 0.
-        prog_bar = tqdm(enumerate(train_data_loader))
-        for step, (x, mel, y) in prog_bar:
+        for step, (x, mel, y) in enumerate(train_data_loader):
             model.train()
             optimizer.zero_grad()
 
@@ -177,8 +176,7 @@ def train(device, model, train_data_loader, test_data_loader, optimizer,
                 with torch.no_grad():
                     eval_model(test_data_loader, global_step, device, model, checkpoint_dir)
 
-            prog_bar.set_description('Loss: {}'.format(running_loss / (step + 1)))
-
+            print('Loss: {}'.format(running_loss / (step + 1)))
         global_epoch += 1
 
 def eval_model(test_data_loader, global_step, device, model, checkpoint_dir):
@@ -262,7 +260,7 @@ if __name__ == "__main__":
 
     test_data_loader = data_utils.DataLoader(
         test_dataset, batch_size=hparams.syncnet_batch_size,
-        num_workers=8)
+        num_workers=2)
 
     device = torch.device("cuda" if use_cuda else "cpu")
 
