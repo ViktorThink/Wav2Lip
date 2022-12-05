@@ -159,7 +159,11 @@ def train(device, model, train_data_loader, test_data_loader, optimizer,
 
             a, v = model(mel, x)
             y = y.to(device)
-
+            
+            print("Shape a:",a.shape)
+            print("Shape y:",y.shape)
+            print("Shape v:",v.shape)
+            
             loss = cosine_loss(a, v, y)
             loss.backward()
             optimizer.step()
