@@ -154,6 +154,9 @@ def train(device, model, train_data_loader, test_data_loader, optimizer,
             x = x.to(device)
 
             mel = mel.to(device)
+            if step == 0:
+                print(x.shape)
+                print(mel.shape)
 
             a, v = model(mel, x)
             y = y.to(device)
