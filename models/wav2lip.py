@@ -104,6 +104,7 @@ class Wav2Lip(nn.Module):
 
         x = audio_embedding
         for f in self.face_decoder_blocks:
+            print("Shape x", x.shape)
             x = f(x)
             try:
                 x = torch.cat((x, feats[-1]), dim=1)
