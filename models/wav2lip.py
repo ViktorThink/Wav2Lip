@@ -10,7 +10,7 @@ class Wav2Lip(nn.Module):
         super(Wav2Lip, self).__init__()
 
         self.face_encoder_blocks = nn.ModuleList([
-            nn.Sequential(Conv2d(3, 8, kernel_size=7, stride=2, padding=3)), # 192
+            nn.Sequential(Conv2d(6, 8, kernel_size=7, stride=2, padding=3)), # 192
             
             nn.Sequential(Conv2d(6, 16, kernel_size=7, stride=2, padding=3)), # 96,96
 
