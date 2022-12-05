@@ -145,51 +145,39 @@ def train(device, model, train_data_loader, test_data_loader, optimizer,
     
     while global_epoch < nepochs:
         running_loss = 0.
-        model.train()
-        print("Stating epoch:", global_epoch)
-        print("lengt:", len(train_data_loader))
-        for step, (x, mel, y) in enumerate(train_data_loader):
-            print("Working 1")
-            
+        prog_bar = tqdm(enumerate(train_data_loader))
+        for step, (x, mel, y) in prog_bar:
+            model.train()
             optimizer.zero_grad()
-            print("Working 2")
 
             # Transform data to CUDA device
             x = x.to(device)
-            print("Working 3")
 
             mel = mel.to(device)
-            print("Working 4")
 
             a, v = model(mel, x)
-            print("Working 5")
             y = y.to(device)
-            print("Working 6")
 
             loss = cosine_loss(a, v, y)
-            print("Working 7")
             loss.backward()
-            print("Working 8")
             optimizer.step()
-            print("Working 9")
 
             global_step += 1
             cur_session_steps = global_step - resumed_step
             running_loss += loss.item()
-            print("Working 10")
 
             if global_step == 1 or global_step % checkpoint_interval == 0:
                 save_checkpoint(
                     model, optimizer, global_step, checkpoint_dir, global_epoch)
-            print("Working 11")
+
             if global_step % hparams.syncnet_eval_interval == 0:
                 with torch.no_grad():
                     eval_model(test_data_loader, global_step, device, model, checkpoint_dir)
-            print("Step:",step)
-            print('Loss: {}'.format(running_loss / (step + 1)))
+
+            prog_bar.set_description('Loss: {}'.format(running_loss / (step + 1)))
 
         global_epoch += 1
-        print("Epoch done")
+
 def eval_model(test_data_loader, global_step, device, model, checkpoint_dir):
     eval_steps = 1400
     print('Evaluating for {} steps'.format(eval_steps))
@@ -271,7 +259,7 @@ if __name__ == "__main__":
 
     test_data_loader = data_utils.DataLoader(
         test_dataset, batch_size=hparams.syncnet_batch_size,
-        num_workers=1)
+        num_workers=8)
 
     device = torch.device("cuda" if use_cuda else "cpu")
 
