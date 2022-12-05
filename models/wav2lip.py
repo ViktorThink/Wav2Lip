@@ -10,7 +10,7 @@ class Wav2Lip(nn.Module):
         super(Wav2Lip, self).__init__()
 
         self.face_encoder_blocks = nn.ModuleList([
-            nn.Sequential(Conv2d(6, 16, kernel_size=7, stride=1, padding=3)), # 96,96
+            nn.Sequential(Conv2d(6, 16, kernel_size=7, stride=2, padding=3)), # 96,96
 
             nn.Sequential(Conv2d(16, 32, kernel_size=3, stride=2, padding=1), # 48,48
             # Conv2d(32, 32, kernel_size=3, stride=2, padding=1),
@@ -108,6 +108,7 @@ class Wav2Lip(nn.Module):
             print("Shape x", x.shape)
             print("Shape feats[-1]", feats[-1].shape)
             x = f(x)
+            print("Shape second x", x.shape)
             try:
                 x = torch.cat((x, feats[-1]), dim=1)
             except Exception as e:
