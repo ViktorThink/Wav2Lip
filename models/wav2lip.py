@@ -13,7 +13,7 @@ class Wav2Lip(nn.Module):
             nn.Sequential(Conv2d(6, 16, kernel_size=7, stride=1, padding=3)), # 96,96
 
             nn.Sequential(Conv2d(16, 32, kernel_size=3, stride=2, padding=1), # 48,48
-            Conv2d(32, 32, kernel_size=3, stride=2, padding=1)
+            Conv2d(32, 32, kernel_size=3, stride=2, padding=1),
             Conv2d(32, 32, kernel_size=3, stride=1, padding=1, residual=True),
             Conv2d(32, 32, kernel_size=3, stride=1, padding=1, residual=True)),
 
