@@ -10,9 +10,8 @@ class Wav2Lip(nn.Module):
         super(Wav2Lip, self).__init__()
 
         self.face_encoder_blocks = nn.ModuleList([
-            nn.Sequential(Conv2d(6, 8, kernel_size=7, stride=2, padding=3)), # 192
             
-            nn.Sequential(Conv2d(6, 16, kernel_size=7, stride=2, padding=3)), # 96,96
+            nn.Sequential(Conv2d(6, 16, kernel_size=7, stride=1, padding=3)), # 96,96
 
             nn.Sequential(Conv2d(16, 32, kernel_size=3, stride=2, padding=1), # 48,48
             # Conv2d(32, 32, kernel_size=3, stride=2, padding=1),
@@ -37,6 +36,8 @@ class Wav2Lip(nn.Module):
             
             nn.Sequential(Conv2d(512, 512, kernel_size=3, stride=1, padding=0),     # 1, 1
             Conv2d(512, 512, kernel_size=1, stride=1, padding=0)),])
+        
+
 
         self.audio_encoder = nn.Sequential(
             Conv2d(1, 32, kernel_size=3, stride=1, padding=1),
@@ -179,13 +180,13 @@ class Wav2Lip_disc_qual(nn.Module):
         return face_sequences
 
     def perceptual_forward(self, false_face_sequences):
-        print("sequence shape", false_face_sequences.shape)
+        # print("sequence shape", false_face_sequences.shape)
         false_face_sequences = self.to_2d(false_face_sequences)
         false_face_sequences = self.get_lower_half(false_face_sequences)
 
         false_feats = false_face_sequences
         for f in self.face_encoder_blocks:
-            print("Flase feats",false_feats.shape)
+            # print("Flase feats",false_feats.shape)
             false_feats = f(false_feats)
 
         false_pred_loss = F.binary_cross_entropy(self.binary_pred(false_feats).view(len(false_feats), -1), 
