@@ -98,6 +98,7 @@ class Wav2Lip(nn.Module):
 
         feats = []
         x = face_sequences
+        print("Shape sequences x", x.shape)
         for f in self.face_encoder_blocks:
             x = f(x)
             feats.append(x)
