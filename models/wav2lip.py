@@ -168,11 +168,13 @@ class Wav2Lip_disc_qual(nn.Module):
         return face_sequences
 
     def perceptual_forward(self, false_face_sequences):
+        print("sequence shape", false_face_sequences.shape)
         false_face_sequences = self.to_2d(false_face_sequences)
         false_face_sequences = self.get_lower_half(false_face_sequences)
 
         false_feats = false_face_sequences
         for f in self.face_encoder_blocks:
+            print("Flase feats",false_feats.shape)
             false_feats = f(false_feats)
 
         false_pred_loss = F.binary_cross_entropy(self.binary_pred(false_feats).view(len(false_feats), -1), 
