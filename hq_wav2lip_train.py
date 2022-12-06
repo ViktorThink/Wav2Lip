@@ -223,7 +223,8 @@ def train(device, model, disc, train_data_loader, test_data_loader, optimizer, d
             disc_optimizer.zero_grad()
 
             g = model(indiv_mels, x)
-
+            print("g", g.shape)
+            print("gt",gt.shape)
             if hparams.syncnet_wt > 0.:
                 sync_loss = get_sync_loss(mel, g)
             else:
