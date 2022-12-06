@@ -10,9 +10,11 @@ class Wav2Lip(nn.Module):
         super(Wav2Lip, self).__init__()
 
         self.face_encoder_blocks = nn.ModuleList([
+            
             nn.Sequential(Conv2d(6, 16, kernel_size=7, stride=1, padding=3)), # 96,96
 
             nn.Sequential(Conv2d(16, 32, kernel_size=3, stride=2, padding=1), # 48,48
+            # Conv2d(32, 32, kernel_size=3, stride=2, padding=1),
             Conv2d(32, 32, kernel_size=3, stride=1, padding=1, residual=True),
             Conv2d(32, 32, kernel_size=3, stride=1, padding=1, residual=True)),
 
@@ -34,6 +36,8 @@ class Wav2Lip(nn.Module):
             
             nn.Sequential(Conv2d(512, 512, kernel_size=3, stride=1, padding=0),     # 1, 1
             Conv2d(512, 512, kernel_size=1, stride=1, padding=0)),])
+        
+
 
         self.audio_encoder = nn.Sequential(
             Conv2d(1, 32, kernel_size=3, stride=1, padding=1),
@@ -78,7 +82,13 @@ class Wav2Lip(nn.Module):
 
             nn.Sequential(Conv2dTranspose(160, 64, kernel_size=3, stride=2, padding=1, output_padding=1),
             Conv2d(64, 64, kernel_size=3, stride=1, padding=1, residual=True),
-            Conv2d(64, 64, kernel_size=3, stride=1, padding=1, residual=True),),]) # 96,96
+            Conv2d(64, 64, kernel_size=3, stride=1, padding=1, residual=True),), # 96,96
+            
+            nn.Sequential(Conv2dTranspose(80, 32, kernel_size=3, stride=2, padding=1, output_padding=1),
+            Conv2d(32, 32, kernel_size=3, stride=1, padding=1, residual=True),
+            Conv2d(32, 32, kernel_size=3, stride=1, padding=1, residual=True),), # 192
+            
+            ]) 
 
         self.output_block = nn.Sequential(Conv2d(80, 32, kernel_size=3, stride=1, padding=1),
             nn.Conv2d(32, 3, kernel_size=1, stride=1, padding=0),
@@ -97,13 +107,19 @@ class Wav2Lip(nn.Module):
 
         feats = []
         x = face_sequences
+        print("Shape sequences x", x.shape)
         for f in self.face_encoder_blocks:
             x = f(x)
             feats.append(x)
 
         x = audio_embedding
+        print("Shape audio", x.shape)
         for f in self.face_decoder_blocks:
+            # print()
+            print("Shape x", x.shape)
+            print("Shape feats[-1]", feats[-1].shape)
             x = f(x)
+            print("Shape second x", x.shape)
             try:
                 x = torch.cat((x, feats[-1]), dim=1)
             except Exception as e:
@@ -112,8 +128,9 @@ class Wav2Lip(nn.Module):
                 raise e
             
             feats.pop()
-
+        print("pre output:",x.shape)
         x = self.output_block(x)
+        print("post output",x.shape)
 
         if input_dim_size > 4:
             x = torch.split(x, B, dim=0) # [(B, C, H, W)]
@@ -130,6 +147,8 @@ class Wav2Lip_disc_qual(nn.Module):
 
         self.face_encoder_blocks = nn.ModuleList([
             nn.Sequential(nonorm_Conv2d(3, 32, kernel_size=7, stride=1, padding=3)), # 48,96
+            
+            # nn.Sequential(nonorm_Conv2d(32, 32, kernel_size=5, stride=2, padding=2)),
 
             nn.Sequential(nonorm_Conv2d(32, 64, kernel_size=5, stride=(1, 2), padding=2), # 48,48
             nonorm_Conv2d(64, 64, kernel_size=5, stride=1, padding=2)),
@@ -161,11 +180,13 @@ class Wav2Lip_disc_qual(nn.Module):
         return face_sequences
 
     def perceptual_forward(self, false_face_sequences):
+        # print("sequence shape", false_face_sequences.shape)
         false_face_sequences = self.to_2d(false_face_sequences)
         false_face_sequences = self.get_lower_half(false_face_sequences)
 
         false_feats = false_face_sequences
         for f in self.face_encoder_blocks:
+            # print("Flase feats",false_feats.shape)
             false_feats = f(false_feats)
 
         false_pred_loss = F.binary_cross_entropy(self.binary_pred(false_feats).view(len(false_feats), -1), 
