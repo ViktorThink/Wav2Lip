@@ -111,7 +111,7 @@ class Wav2Lip(nn.Module):
         x = audio_embedding
         print("Shape audio", x.shape)
         for f in self.face_decoder_blocks:
-            # print()
+            print()
             print("Shape x", x.shape)
             print("Shape feats[-1]", feats[-1].shape)
             x = f(x)
