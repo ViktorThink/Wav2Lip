@@ -235,8 +235,7 @@ def train(device, model, disc, train_data_loader, test_data_loader, optimizer, d
                 perceptual_loss = disc.perceptual_forward(g)
             else:
                 perceptual_loss = 0.
-            print("Shape g",g.shape)
-            print("Shape gt",gt.shape)
+
             l1loss = recon_loss(g, gt)
 
             loss = hparams.syncnet_wt * sync_loss + hparams.disc_wt * perceptual_loss + \
