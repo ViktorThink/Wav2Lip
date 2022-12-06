@@ -117,7 +117,7 @@ class Wav2Lip(nn.Module):
             print("Shape second x", x.shape)
             try:
                 x = torch.cat((x, feats[-1]), dim=1)
-                print("Shape concat")
+                print("Shape concat",x.shape)
             except Exception as e:
                 print(x.size())
                 print(feats[-1].size())
