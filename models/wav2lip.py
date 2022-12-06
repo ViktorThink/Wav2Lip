@@ -97,30 +97,23 @@ class Wav2Lip(nn.Module):
 
         feats = []
         x = face_sequences
-        print("Shape sequences x", x.shape)
         for f in self.face_encoder_blocks:
             x = f(x)
             feats.append(x)
 
         x = audio_embedding
-        print("Shape audio", x.shape)
         for f in self.face_decoder_blocks:
-            print()
-            print("Shape feats[-1]", feats[-1].shape)
             x = f(x)
-            print("Shape second x", x.shape)
             try:
                 x = torch.cat((x, feats[-1]), dim=1)
-                print("Shape concat",x.shape)
             except Exception as e:
                 print(x.size())
                 print(feats[-1].size())
                 raise e
             
             feats.pop()
-        print("pre output:",x.shape)
+
         x = self.output_block(x)
-        print("post output",x.shape)
 
         if input_dim_size > 4:
             x = torch.split(x, B, dim=0) # [(B, C, H, W)]
@@ -130,7 +123,6 @@ class Wav2Lip(nn.Module):
             outputs = x
             
         return outputs
-
 
 class Wav2Lip_disc_qual(nn.Module):
     def __init__(self):
