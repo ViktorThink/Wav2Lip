@@ -152,7 +152,10 @@ class Wav2Lip_disc_qual(nn.Module):
 
             nn.Sequential(nonorm_Conv2d(128, 256, kernel_size=5, stride=2, padding=2),   # 12,12
             nonorm_Conv2d(256, 256, kernel_size=5, stride=1, padding=2)),
-
+            
+            nn.Sequential(nonorm_Conv2d(256, 256, kernel_size=5, stride=2, padding=2),   # 12,12
+            nonorm_Conv2d(256, 256, kernel_size=5, stride=1, padding=2)),
+            
             nn.Sequential(nonorm_Conv2d(256, 512, kernel_size=3, stride=2, padding=1),       # 6,6
             nonorm_Conv2d(512, 512, kernel_size=3, stride=1, padding=1)),
 
