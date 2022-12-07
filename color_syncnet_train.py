@@ -160,9 +160,9 @@ def train(device, model, train_data_loader, test_data_loader, optimizer,
             a, v = model(mel, x)
             y = y.to(device)
             
-            print("Shape a:",a.shape)
-            print("Shape y:",y.shape)
-            print("Shape v:",v.shape)
+            # print("Shape a:",a.shape)
+            # print("Shape y:",y.shape)
+            # print("Shape v:",v.shape)
             
             loss = cosine_loss(a, v, y)
             loss.backward()
@@ -179,7 +179,7 @@ def train(device, model, train_data_loader, test_data_loader, optimizer,
             if global_step % hparams.syncnet_eval_interval == 0:
                 with torch.no_grad():
                     eval_model(test_data_loader, global_step, device, model, checkpoint_dir)
-
+            print("Step:",str(global_step), end=" - ")
             print('Loss: {}'.format(running_loss / (step + 1)))
         global_epoch += 1
 

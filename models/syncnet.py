@@ -57,7 +57,7 @@ class SyncNet_color(nn.Module):
         face_embedding = self.face_encoder(face_sequences)
         audio_embedding = self.audio_encoder(audio_sequences)
         
-        print("face embedding",face_embedding.shape)
+        # print("face embedding",face_embedding.shape)
 
         audio_embedding = audio_embedding.view(audio_embedding.size(0), -1)
         face_embedding = face_embedding.view(face_embedding.size(0), -1)
